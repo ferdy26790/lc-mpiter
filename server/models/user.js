@@ -7,12 +7,7 @@ const userSchema = new Schema({
   name: String,
   email: String,
   password: String,
-  tweets: [
-    {
-    type: Schema.Types.ObjectId,
-    ref: 'tweet'
-    }
-  ]
+  photo: String
 })
 
 let User = mongoose.model('user', userSchema)

@@ -10,7 +10,11 @@ const tweetSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'user'
     }
-  ]
+  ],
+  creator: {
+    type: Schema.Types.ObjectId,
+    ref: 'user'
+  }
 })
 
 let Tweet = mongoose.model('tweet', tweetSchema)

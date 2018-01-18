@@ -62,6 +62,27 @@ class User{
       console.log(err);
     })
   }
+
+  static editUser(req, res) {
+    console.log('masuk');
+    let decoded = getDecode(req.headers.token)
+    userModel.findById(decoded.data_id)
+    .then((user) => {
+      user.name = req.body.name || user.name
+      user.email = req.body.email || user.Email
+      user.photo = req.file.cloudStoragePublicUrl || '',
+      user.save()
+      .then((response) => {
+        res.status(200).json({
+          data: response
+        })
+      }).catch((err) => {
+        console.error(err);
+      })
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
 }
 
 module.exports = User
