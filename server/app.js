@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var users = require('./routes/users');
 const signup = require('./routes/signup')
 const signin = require('./routes/signin')
+const tweets = require('./routes/tweets')
 var app = express();
 
 // view engine setup
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/users', users)
 app.use('/api/signup', signup)
 app.use('/api/signin', signin)
+app.use('/api/tweets', tweets)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
