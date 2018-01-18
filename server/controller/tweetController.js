@@ -1,4 +1,5 @@
 const tweetModel = require('../models/tweet')
+const userModel = require('../models/user')
 const jwt = require('jsonwebtoken')
 let getDecode = function (token) {
   let decoded = jwt.verify(token, 'secure');
@@ -11,12 +12,24 @@ class Tweet{
     let decoded = getDecode(req.headers.token)
     let newTweet = new tweetModel({
       caption: req.body.caption,
-      userTweet: decoded.data._id
     })
     newTweet.save()
     .then((response) => {
-      res.status(200).json({
-        newTweet: response
+      userModel.findById(decoded.data._id)
+      .then((user) => {
+        console.log('masuuuukk');
+        user.tweets.push(response._id)
+        user.save()
+        .then((result) => {
+          res.status(200).json({
+            user: result,
+            newtweet: response
+          })
+        }).catch((err) => {
+          console.log(err);
+        })
+      }).catch((err) => {
+        console.log(err);
       })
     }).catch((err) => {
       console.log(err);
@@ -27,24 +40,37 @@ class Tweet{
     let decoded = getDecode(req.headers.token)
     tweetModel.findById(req.params.id)
     .then((tweet) => {
-      if(tweet.userTweet == decoded.data._id) {
-        console.log('masuk if');
-        tweetModel.findByIdAndRemove(req.params.id)
-        .then((result) => {
-          res.status(200).json({
-            msg: "tweet deleted",
-            tweetDeleted: result
-          })
-        }).catch((err) => {
-          console.log(err);
+      userModel.findById(decoded.data._id)
+      .then((user) => {
+        user.tweets.forEach((userTweet, idx) => {
+          if(userTweet == tweet._id) {
+            user.tweets.splice(idx, 1)
+            user.save()
+            .then((userUpdate) => {
+              tweetModel.findByIdAndRemove(req.params.id)
+              .then((tweetDeleted) => {
+                res.status(200).json({
+                  user: userUpdate,
+                  tweet: tweetDeleted
+                })
+              }).catch((err) => {
+                console.log(err);
+              })
+            }).catch((err) => {
+              console.log(err);
+            })
+          } else {
+            res.status(404)
+          }
         })
-      } else {
-        console.log('masuk else');
-      }
+      }).catch((err) => {
+        console.log(err);
+      })
     }).catch((err) => {
       console.log(err);
     })
   }
+
 }
 
 module.exports = Tweet

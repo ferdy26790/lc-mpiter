@@ -5,10 +5,12 @@ const Schema = mongoose.Schema;
 
 const tweetSchema = new Schema({
   caption: String,
-  userTweet: {
-    type: Schema.Types.ObjectId,
-    ref: 'user'
-  }
+  likes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'user'
+    }
+  ]
 })
 
 let Tweet = mongoose.model('tweet', tweetSchema)

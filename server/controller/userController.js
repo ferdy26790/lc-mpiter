@@ -1,10 +1,10 @@
 const userModel = require('../models/user')
+const tweetModel = require('../models/tweet')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const saltRounds = 10;
 let getDecode = function (token) {
   let decoded = jwt.verify(token, 'secure');
-  console.log(decoded);
   return decoded
 }
 
@@ -48,6 +48,16 @@ class User{
           res.send('password salah')
         }
       })
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  static getSelfUser(req, res) {
+    let decoded = getDecode(req.headers.token)
+    userModel.findById(decoded.data._id)
+    .then((user) => {
+
     }).catch((err) => {
       console.log(err);
     })
